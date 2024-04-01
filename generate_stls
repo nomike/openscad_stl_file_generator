@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+"""
+Usage:
+    generate_stls [--output-dir=<output-dir>] [-v|--verbose]
+    generate_stls -h | --help
+
+Options:
+    -h --help                   Show this screen.
+    -v --verbose                Show debug messages.
+    --output-dir=<output-dir>   Directory to save STL files to [default: output].
+"""
+
+import glob
+import logging
+import os.path
+import json
+import docopt
+
+if __name__ == '__main__':
+    args = docopt.docopt(__doc__, version='generate_stls 1.0')
+    if args['--verbose']:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+    logging.debug('Looking for .scad files...')
+    for f in glob.glob('*.scad'):
+        logging.debug(f'Found {f}.')
+        logging.debug('Looking for parameter-set-files')
+
+        if os.path.exists(f[:-5] + '.json'):
+            logging.debug(f'Found {f[:-5]}.json.')
+            with open(f[:-5] + '.json', 'r') as file:
+                data = json.load(file)
+                logging.debug('Loaded JSON data.')
+                for key, parameter_set in data['parameterSets'].items():
+                    target_filename = f'output/{f[:-5]}-{key.replace("/", "_")}.stl'
+                    if os.path.exists(target_filename):
+                        logging.debug(f'{target_filename} already exists. Checking if it is up-to-date...')
+                        if os.path.getmtime(f) < os.path.getmtime(target_filename) and os.path.getmtime(f[:-5] + '.json') < os.path.getmtime(target_filename):
+                            logging.debug(f'{target_filename} is up to date. Ignoring.')
+                            continue
+                        else:
+                            logging.debug(f'{target_filename} is out-of-date.')
+                    else:
+                        logging.debug(f'{target_filename} does not exist.')
+                    logging.debug('Running OpenSCAD to generate {target_filename}...')
+                    os.system(f'openscad -o {target_filename} {f} -p {f[:-5]}.json -P "{parameter_set}"')
