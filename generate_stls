@@ -44,5 +44,7 @@ if __name__ == '__main__':
                             logging.debug(f'{target_filename} is out-of-date.')
                     else:
                         logging.debug(f'{target_filename} does not exist.')
-                    logging.debug('Running OpenSCAD to generate {target_filename}...')
-                    os.system(f'openscad -o {target_filename} {f} -p {f[:-5]}.json -P "{parameter_set}"')
+                    logging.info(f'Running OpenSCAD to generate {target_filename}...')
+                    command = f'openscad -o {target_filename} {f} -p {f[:-5]}.json -P "{key}"'
+                    logging.debug(f'Running command: {command}')
+                    os.system(command)
