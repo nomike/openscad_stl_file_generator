@@ -61,6 +61,6 @@ if __name__ == '__main__':
             else:
                 logging.debug(f'{target_filename} does not exist.')
             logging.info(f'Running OpenSCAD to generate {target_filename}...')
-            command = f'openscad -o {target_filename} {f}s'
+            command = f'openscad -o {target_filename} {f}'
             logging.debug(f'Running command: {command}')
             os.system(command)
