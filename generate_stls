@@ -48,3 +48,19 @@ if __name__ == '__main__':
                     command = f'openscad -o {target_filename} {f} -p {f[:-5]}.json -P "{key}"'
                     logging.debug(f'Running command: {command}')
                     os.system(command)
+        else:
+            logging.info("No parameter-set-file found. Executing OpenSCAD without paratemer-set.")
+            target_filename = f'output/{f[:-5]}.stl'
+            if os.path.exists(target_filename):
+                logging.debug(f'{target_filename} already exists. Checking if it is up-to-date...')
+                if os.path.getmtime(f) < os.path.getmtime(target_filename):
+                    logging.debug(f'{target_filename} is up to date. Ignoring.')
+                    continue
+                else:
+                    logging.debug(f'{target_filename} is out-of-date.')
+            else:
+                logging.debug(f'{target_filename} does not exist.')
+            logging.info(f'Running OpenSCAD to generate {target_filename}...')
+            command = f'openscad -o {target_filename} {f}s'
+            logging.debug(f'Running command: {command}')
+            os.system(command)
