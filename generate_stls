@@ -16,6 +16,7 @@ import logging
 import os.path
 import json
 import docopt
+import subprocess
 
 if __name__ == '__main__':
     args = docopt.docopt(__doc__, version='generate_stls 1.0')
@@ -45,9 +46,9 @@ if __name__ == '__main__':
                     else:
                         logging.debug(f'{target_filename} does not exist.')
                     logging.info(f'Running OpenSCAD to generate {target_filename}...')
-                    command = f'openscad -o {target_filename} {f} -p {f[:-5]}.json -P "{key}"'
+                    command = ['openscad', '-o', target_filename, f, '-p', f'{f[:-5]}.json', '-P', key]
                     logging.debug(f'Running command: {command}')
-                    os.system(command)
+                    subprocess.run(command)
         else:
             logging.info("No parameter-set-file found. Executing OpenSCAD without paratemer-set.")
             target_filename = f'output/{f[:-5]}.stl'
@@ -61,6 +62,6 @@ if __name__ == '__main__':
             else:
                 logging.debug(f'{target_filename} does not exist.')
             logging.info(f'Running OpenSCAD to generate {target_filename}...')
-            command = f'openscad -o {target_filename} {f}'
+            command = ['openscad', '-o', target_filename, f]
             logging.debug(f'Running command: {command}')
-            os.system(command)
+            subprocess.run(command)
