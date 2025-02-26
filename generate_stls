@@ -46,7 +46,7 @@ if __name__ == '__main__':
                     else:
                         logging.debug(f'{target_filename} does not exist.')
                     logging.info(f'Running OpenSCAD to generate {target_filename}...')
-                    command = ['openscad', '-o', target_filename, f, '-p', f'{f[:-5]}.json', '-P', key]
+                    command = ['openscad', '--backend', 'Manifold', '-o', target_filename, f, '-p', f'{f[:-5]}.json', '-P', key]
                     logging.debug(f'Running command: {command}')
                     subprocess.run(command)
         else:
